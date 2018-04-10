@@ -1,6 +1,7 @@
 import sys
 import copy
 import itertools
+from __future__ import print_function
 # import the Point, Block, and Laser objects
 
 
@@ -32,6 +33,13 @@ class Game:
         self.read(fptr)
 
     # DO SOMETHING HERE SO WE CAN PRINT A REPRESENTATION OF GAME!
+    def __str__(self):
+        print('-'* (2 *len(board[0])+1))
+        for i in range(len(board[0])):
+            for j in range(len(board[0])):
+                print('|'+ str(board[i][j]), end = '')
+            print ('|')
+            print('-'* (2 *len(board[0])+1))
 
     def read(self, fptr):
         '''
