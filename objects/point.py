@@ -10,7 +10,7 @@ class Point:
 
         DONT FORGET TO COMMENT!
         '''
-        pass
+        self.pos = pos
 
     # MORE
     # Difficulty 1
