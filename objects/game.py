@@ -56,7 +56,12 @@ class Game:
 
             None
         '''
-        pass
+        self.fptr = open(fptr, 'r')
+        data = self.fptr.read()
+
+
+        self.fptr.close()
+
 
     def generate_boards(self):
         '''
