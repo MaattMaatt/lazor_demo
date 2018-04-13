@@ -65,6 +65,7 @@ class Game:
         block_set = []
         lazor_set = []
         point_set = []
+        board_set1 = []
         data = [line for line in self.fptr.strip().split('\n') if not '#' in line]
         for i in range(len(data)):
             if i < len(data) and data[i]== '':
@@ -74,6 +75,8 @@ class Game:
         board_set = data[data.index('GRID START')+1:data.index('GRID STOP')]
         for i in range(len(board_set)):
             board_set[i]= board_set[i].replace(' ','')
+        for i in range(len(board_set)):
+    		board_set1.append(list(itertools.chain(board_set[i]))) 
 
         data = data[data.index('GRID STOP')+1:]
 
@@ -163,6 +166,18 @@ class Game:
                     if partitions[i][j] == 1:
                         partitions[i][j] = blocks_per[n][k]
                         k += 1
+        
+        # add the block partitions into the boards
+        for n in range(len(partitions)):
+    		k = 0
+    		for i in range(len(board_set1)):
+        		for j in range(len(board_set1[0])):
+            		if board_set1[i][j] == 'o':
+                		board_set1[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
+                		k += 1
+    		boards.append(board_set1)
+
+    	return boards
 
     def set_board(self, board):
         '''
