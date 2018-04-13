@@ -31,15 +31,19 @@ class Game:
         '''
         self.fname = fptr
         self.read(fptr)
+        self.available_space = 0
+        self.blocks = []
+        self.blocks_per = []
+
 
     # DO SOMETHING HERE SO WE CAN PRINT A REPRESENTATION OF GAME!
     def __str__(self):
-        print('-'* (2 *len(board[0])+1))
-        for i in range(len(board[0])):
-            for j in range(len(board[0])):
-                print('|'+ str(board[i][j]), end = '')
+        print('-'* (2 *len(board_set[0])+1))
+        for i in range(len(board_set[0])):
+            for j in range(len(board_set[0])):
+                print('|'+ str(board_set[i][j]), end = '')
             print ('|')
-            print('-'* (2 *len(board[0])+1))
+            print('-'* (2 *len(board_set[0])+1))
 
     def read(self, fptr):
         '''
@@ -56,11 +60,58 @@ class Game:
 
             None
         '''
-        self.fptr = open(fptr, 'r')
-        data = self.fptr.read()
+        self.fptr = open(fptr, 'r').read()
+
+        block_set = []
+        lazor_set = []
+        point_set = []
+        data = [line for line in self.fptr.strip().split('\n') if not '#' in line]
+        for i in range(len(data)):
+            if i < len(data) and data[i]== '':
+                del data[i]
+
+        #create the list of board, block, lazor, point separately
+        board_set = data[data.index('GRID START')+1:data.index('GRID STOP')]
+        for i in range(len(board_set)):
+            board_set[i]= board_set[i].replace(' ','')
+
+        data = data[data.index('GRID STOP')+1:]
+
+        for i in range(len(data)):
+            if data[i].find('A') == 0:
+                a = i
+                break
+        for i in range(len(data)):
+            if data[i].find('L') == 0 :
+                b = i
+                break
+        for i in range(len(data)):
+            if data[i].find('P')==0:
+                c = i
+                break
+        block_set = data[a:b]
+        block_set = [block_set[i].split(' ') for i in range(len(block_set))]
+        lazor_set = data[b:c]
+        lazor_set = [lazor_set[i].split(' ') for i in range(len(lazor_set))]
+        point_set = data[c:] 
+        point_set = [point_set[i].split(' ') for i in range(len(point_set))]
+
+        #figure out the number of available space
+        for i in range(len(self.board_set)):
+            for j in range(len(self.board_set[0])):
+                if self.board_set[i][j] == 'o':
+                    self.available_space += 1
+        
+        # make the list of original block set
+        for i in range(len(block_set)):
+            for j in range(int(block_set[i][1])):
+                self.blocks.append(block_set[i][0])
+
+        # make the list of all permutations of blocks
+        self.blocks_per = list(set(itertools.permutations(blocks)))
 
 
-        self.fptr.close()
+        # self.fptr.close()
 
 
     def generate_boards(self):
@@ -104,8 +155,14 @@ class Game:
         # Now we have the partitions, we just need to make our boards
         boards = []
 
-        # YOUR CODE HERE
-        pass
+        # add the permutationed blocks into the available_space partitions
+        for n in range(len(blocks_per)):
+            for i in range(len(partitions)):
+                k = 0
+                for j in range(len(partitions[0])):
+                    if partitions[i][j] == 1:
+                        partitions[i][j] = blocks_per[n][k]
+                        k += 1
 
     def set_board(self, board):
         '''
