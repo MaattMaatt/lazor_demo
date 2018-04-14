@@ -1,6 +1,7 @@
 import sys
 import copy
 import itertools
+from __future__ import print_function
 # import the Point, Block, and Laser objects
 
 
@@ -30,8 +31,19 @@ class Game:
         '''
         self.fname = fptr
         self.read(fptr)
+        self.available_space = 0
+        self.blocks = []
+        self.blocks_per = []
+
 
     # DO SOMETHING HERE SO WE CAN PRINT A REPRESENTATION OF GAME!
+    def __str__(self):
+        print('-'* (2 *len(board_set[0])+1))
+        for i in range(len(board_set[0])):
+            for j in range(len(board_set[0])):
+                print('|'+ str(board_set[i][j]), end = '')
+            print ('|')
+            print('-'* (2 *len(board_set[0])+1))
 
     def read(self, fptr):
         '''
@@ -48,7 +60,63 @@ class Game:
 
             None
         '''
-        pass
+        self.fptr1 = open(fptr, 'r')
+        self.fptr = self.fptr1.read()
+
+        # self.block_set = []
+        # self.lazor_set = []
+        # self.point_set = []
+        self.board_set1 = []
+        data = [line for line in self.fptr.strip().split('\n') if not '#' in line]
+        for i in range(len(data)):
+            if i < len(data) and data[i]== '':
+                del data[i]
+
+        #create the list of board, block, lazor, point separately
+        board_set = data[data.index('GRID START')+1:data.index('GRID STOP')]
+        for i in range(len(board_set)):
+            board_set[i]= board_set[i].replace(' ','')
+        for i in range(len(board_set)):
+    		self.board_set1.append(list(itertools.chain(board_set[i]))) 
+
+        data = data[data.index('GRID STOP')+1:]
+
+        for i in range(len(data)):
+            if data[i].find('A') == 0:
+                a = i
+                break
+        for i in range(len(data)):
+            if data[i].find('L') == 0 :
+                b = i
+                break
+        for i in range(len(data)):
+            if data[i].find('P')==0:
+                c = i
+                break
+        self.block_set = data[a:b]
+        self.block_set = [self.block_set[i].split(' ') for i in range(len(self.block_set))]
+        self.lazor_set = data[b:c]
+        self.lazor_set = [self.lazor_set[i].split(' ') for i in range(len(self.lazor_set))]
+        self.point_set = data[c:] 
+        self.point_set = [self.point_set[i].split(' ') for i in range(len(self.point_set))]
+
+        #figure out the number of available space
+        for i in range(len(self.board_set1)):
+            for j in range(len(self.board_set1[0])):
+                if self.board_set1[i][j] == 'o':
+                    self.available_space += 1
+        
+        # make the list of original block set
+        for i in range(len(self.block_set1)):
+            for j in range(int(self.block_set1[i][1])):
+                self.blocks.append(self.block_set1[i][0])
+
+        # make the list of all permutations of blocks
+        self.blocks_per = list(set(itertools.permutations(blocks)))
+
+
+        self.fptr1.close()
+
 
     def generate_boards(self):
         '''
@@ -91,8 +159,28 @@ class Game:
         # Now we have the partitions, we just need to make our boards
         boards = []
 
-        # YOUR CODE HERE
-        pass
+        # add the permutationed blocks into the available_space partitions
+        for n in range(len(self.blocks_per)):
+            for i in range(len(partitions)):
+                k = 0
+                for j in range(len(partitions[0])):
+                    if partitions[i][j] == 1:
+                        partitions[i][j] = self.blocks_per[n][k]
+                        k += 1
+                    elif partitions[i][j] == 0:
+                		partitions[i][j] = 'o'
+        
+        # add the block partitions into the boards
+        for n in range(len(partitions)):
+    		k = 0
+    		for i in range(len(self.board_set1)):
+        		for j in range(len(self.board_set1[0])):
+            		if self.board_set1[i][j] == 'o':
+                		self.board_set1[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
+                		k += 1
+    		boards.append(self.board_set1)
+
+    	return boards
 
     def set_board(self, board):
         '''
@@ -114,7 +202,7 @@ class Game:
         # YOUR CODE HERE
         pass
 
-    def save_board(self):
+    def save_board(self,board): # need more testing.
         '''
         Difficulty 2
 
@@ -126,7 +214,17 @@ class Game:
             None
         '''
         # YOUR CODE HERE
-        pass
+        fptr2 = open("showstopper_2.input", 'a')
+		fptr2.write('Here is the solving board')
+
+		for i in range(len(board)):
+			for j in range(len(board[0])):
+				if board[i][j]!= None:
+					board[i][j] = board[i][j].btype()
+
+
+		fptr2.write(board) 
+		fptr2.close()
 
     def run(self):
         '''
