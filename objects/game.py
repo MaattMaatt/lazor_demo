@@ -60,7 +60,8 @@ class Game:
 
             None
         '''
-        self.fptr = open(fptr, 'r').read()
+        self.fptr1 = open(fptr, 'r')
+        self.fptr = self.fptr1.read()
 
         # self.block_set = []
         # self.lazor_set = []
@@ -114,7 +115,7 @@ class Game:
         self.blocks_per = list(set(itertools.permutations(blocks)))
 
 
-        # self.fptr.close()
+        self.fptr1.close()
 
 
     def generate_boards(self):
@@ -201,7 +202,7 @@ class Game:
         # YOUR CODE HERE
         pass
 
-    def save_board(self):
+    def save_board(self,board): # need more testing.
         '''
         Difficulty 2
 
@@ -213,7 +214,17 @@ class Game:
             None
         '''
         # YOUR CODE HERE
-        pass
+        fptr2 = open("showstopper_2.input", 'a')
+		fptr2.write('Here is the solving board')
+
+		for i in range(len(board)):
+			for j in range(len(board[0])):
+				if board[i][j]!= None:
+					board[i][j] = board[i][j].btype()
+
+
+		fptr2.write(board) 
+		fptr2.close()
 
     def run(self):
         '''
