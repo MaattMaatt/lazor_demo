@@ -168,7 +168,7 @@ class Game:
                         partitions[i][j] = self.blocks_per[n][k]
                         k += 1
                     elif partitions[i][j] == 0:
-                		partitions[i][j] == None
+                		partitions[i][j] = 'o'
         
         # add the block partitions into the boards
         for n in range(len(partitions)):
