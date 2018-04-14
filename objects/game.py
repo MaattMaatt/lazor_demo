@@ -1,7 +1,8 @@
+from __future__ import print_function
 import sys
 import copy
 import itertools
-from __future__ import print_function
+
 # import the Point, Block, and Laser objects
 
 
@@ -30,20 +31,20 @@ class Game:
                 This game object.
         '''
         self.fname = fptr
-        self.read(fptr)
         self.available_space = 0
         self.blocks = []
         self.blocks_per = []
+        self.read(fptr)
 
 
     # DO SOMETHING HERE SO WE CAN PRINT A REPRESENTATION OF GAME!
     def __str__(self):
-        print('-'* (2 *len(board_set[0])+1))
-        for i in range(len(board_set[0])):
-            for j in range(len(board_set[0])):
-                print('|'+ str(board_set[i][j]), end = '')
+        print('-'* (2 *len(self.board_set1[0])+1))
+        for i in range(len(self.board_set1[0])):
+            for j in range(len(self.board_set1[0])):
+                print('|'+ str(self.board_set1[i][j]), end = '')
             print ('|')
-            print('-'* (2 *len(board_set[0])+1))
+            print('-'* (2 *len(self.board_set1[0])+1))
 
     def read(self, fptr):
         '''
@@ -78,6 +79,8 @@ class Game:
             board_set[i]= board_set[i].replace(' ','')
         for i in range(len(board_set)):
     		self.board_set1.append(list(itertools.chain(board_set[i]))) 
+    	self.length = len(self.board_set1[0])
+		self.height = len(self.board_set1)
 
         data = data[data.index('GRID STOP')+1:]
 
@@ -108,11 +111,11 @@ class Game:
         
         # make the list of original block set
         for i in range(len(self.block_set1)):
-            for j in range(int(self.block_set1[i][1])):
-                self.blocks.append(self.block_set1[i][0])
+            for j in range(int(self.block_set[i][1])):
+                self.blocks.append(self.block_set[i][0])
 
         # make the list of all permutations of blocks
-        self.blocks_per = list(set(itertools.permutations(blocks)))
+        self.blocks_per = list(set(itertools.permutations(self.blocks)))
 
 
         self.fptr1.close()
