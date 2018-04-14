@@ -22,9 +22,4 @@ class Point:
             self.intersect = 1
         return self.intersect
 
-# test code
-p = Point((1,2))
-print p.position
-print p.check_intersection((2,2))
-print p.check_intersection((1,2))
-print p.check_intersection((2,2))
+
