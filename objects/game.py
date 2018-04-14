@@ -62,10 +62,10 @@ class Game:
         '''
         self.fptr = open(fptr, 'r').read()
 
-        block_set = []
-        lazor_set = []
-        point_set = []
-        board_set1 = []
+        # self.block_set = []
+        # self.lazor_set = []
+        # self.point_set = []
+        self.board_set1 = []
         data = [line for line in self.fptr.strip().split('\n') if not '#' in line]
         for i in range(len(data)):
             if i < len(data) and data[i]== '':
@@ -76,7 +76,7 @@ class Game:
         for i in range(len(board_set)):
             board_set[i]= board_set[i].replace(' ','')
         for i in range(len(board_set)):
-    		board_set1.append(list(itertools.chain(board_set[i]))) 
+    		self.board_set1.append(list(itertools.chain(board_set[i]))) 
 
         data = data[data.index('GRID STOP')+1:]
 
@@ -92,23 +92,23 @@ class Game:
             if data[i].find('P')==0:
                 c = i
                 break
-        block_set = data[a:b]
-        block_set = [block_set[i].split(' ') for i in range(len(block_set))]
-        lazor_set = data[b:c]
-        lazor_set = [lazor_set[i].split(' ') for i in range(len(lazor_set))]
-        point_set = data[c:] 
-        point_set = [point_set[i].split(' ') for i in range(len(point_set))]
+        self.block_set = data[a:b]
+        self.block_set = [self.block_set[i].split(' ') for i in range(len(self.block_set))]
+        self.lazor_set = data[b:c]
+        self.lazor_set = [self.lazor_set[i].split(' ') for i in range(len(self.lazor_set))]
+        self.point_set = data[c:] 
+        self.point_set = [self.point_set[i].split(' ') for i in range(len(self.point_set))]
 
         #figure out the number of available space
-        for i in range(len(self.board_set)):
-            for j in range(len(self.board_set[0])):
-                if self.board_set[i][j] == 'o':
+        for i in range(len(self.board_set1)):
+            for j in range(len(self.board_set1[0])):
+                if self.board_set1[i][j] == 'o':
                     self.available_space += 1
         
         # make the list of original block set
-        for i in range(len(block_set)):
-            for j in range(int(block_set[i][1])):
-                self.blocks.append(block_set[i][0])
+        for i in range(len(self.block_set1)):
+            for j in range(int(self.block_set1[i][1])):
+                self.blocks.append(self.block_set1[i][0])
 
         # make the list of all permutations of blocks
         self.blocks_per = list(set(itertools.permutations(blocks)))
@@ -159,23 +159,25 @@ class Game:
         boards = []
 
         # add the permutationed blocks into the available_space partitions
-        for n in range(len(blocks_per)):
+        for n in range(len(self.blocks_per)):
             for i in range(len(partitions)):
                 k = 0
                 for j in range(len(partitions[0])):
                     if partitions[i][j] == 1:
-                        partitions[i][j] = blocks_per[n][k]
+                        partitions[i][j] = self.blocks_per[n][k]
                         k += 1
+                    elif partitions[i][j] == 0:
+                		partitions[i][j] == None
         
         # add the block partitions into the boards
         for n in range(len(partitions)):
     		k = 0
-    		for i in range(len(board_set1)):
-        		for j in range(len(board_set1[0])):
-            		if board_set1[i][j] == 'o':
-                		board_set1[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
+    		for i in range(len(self.board_set1)):
+        		for j in range(len(self.board_set1[0])):
+            		if self.board_set1[i][j] == 'o':
+                		self.board_set1[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
                 		k += 1
-    		boards.append(board_set1)
+    		boards.append(self.board_set1)
 
     	return boards
 
