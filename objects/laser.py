@@ -10,7 +10,6 @@ class Laser:
 
     def update(self,board_variation, all_points)
         # find potential new location of laser and decide how it will interact with that point
-        newpoint
-    pass
-    # MORE
-    # Difficulty 4
+
+        # need to know which block the point is headed into (blocks are on even squares)
+

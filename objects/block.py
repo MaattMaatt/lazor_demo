@@ -6,6 +6,9 @@ class block:
         # block contains boolean info about the ways a laser will interact
         # laser can go go thru, be "killed", reflect, or reflect + refract
 
+        # save block type in block so we can print it later
+        self.btype = blocktype
+
         if blocktype == 'x' or blocktype == 'o':
             self.thru = 1
             self.kill = 0
@@ -30,3 +33,4 @@ class block:
 # print opaq.kill 
 # print opaq.reflect 
 # print opaq.refract 
+# print opaq.btype
