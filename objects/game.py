@@ -9,37 +9,16 @@ from point import Point
 from laser import Laser
 
 class Game:
-    '''
-    The game grid.  Here we read in some user input, assign all our blocks,
-    lasers, and points, determine all the possible different combinations
-    of boards we could make, and then run through them all to try and find
-    the winning one.
-    '''
 
     def __init__(self, fptr):
-        '''
-        Difficulty 1
-
-        Initialize our game.
-
-        **Parameters**
-
-            fptr: *str*
-                The file name of the input board to solve.
-
-        **Returns**
-
-            game: *Game*
-                This game object.
-        '''
+ 
         self.fname = fptr
         self.available_space = 0
         self.blocks = []
         self.blocks_per = []
         self.read(fptr)
 
-
-    # DO SOMETHING HERE SO WE CAN PRINT A REPRESENTATION OF GAME!
+    # make initial board to print
     def __str__(self):
         print('-'* (2 *len(self.board_set1[0])+1))
         for i in range(len(self.board_set1[0])):
@@ -50,26 +29,10 @@ class Game:
         return ''
 
     def read(self, fptr):
-        '''
-        Difficulty 3
 
-        Some function that reads in a file, and generates the internal board.
-
-        **Parameters**
-
-            fptr: *str*
-                The file name of the input board to solve.
-
-        **Returns**
-
-            None
-        '''
         self.fptr1 = open(fptr, 'r')
         self.fptr = self.fptr1.read()
 
-        # self.block_set = []
-        # self.lazor_set = []
-        # self.point_set = []
         self.board_set1 = []
         data = [line for line in self.fptr.strip().split('\n') if not '#' in line]
         for i in range(len(data)):
@@ -128,35 +91,11 @@ class Game:
         self.fptr1.close()
 
 
-    def generate_boards(self):
-        '''
-        Difficulty 3
-
-        A function to generate all possible board combinations with the
-        available blocks.
-
-        First get all possible combinations of blocks on the board (we'll call these boards)
-          We know we have self.blocks, and N_blocks = len(self.blocks)
-          We also know we have self.available_space
-          So, essentially we have to find all the possible ways to put N_blocks into
-          self.available_space
-        This becomes the "stars and bars" problem; however, we have distinguishable "stars",
-        and further we restrict our system so that only one thing can be put in each bin.
-
-        **Returns**
-
-            None
-        '''
+    def generate_boards(self): 
 
         def get_partitions(n, k):
-            '''
-            A robust way of getting all permutations.  Note, this is clearly not the fastest
-            way about doing this though.
-
-            **Reference**
-
-             - http://stackoverflow.com/a/34690583
-            '''
+            # recommended way of generating permutations
+            # **Reference**- http://stackoverflow.com/a/34690583
             for c in itertools.combinations(range(n + k - 1), k - 1):
                 yield [b - a - 1 for a, b in zip((-1,) + c, c + (n + k - 1,))]
 
@@ -193,38 +132,11 @@ class Game:
 
         return boards
 
-    def set_board(self, board):
-        '''
-        Difficulty 2
-
-        A function to assign a potential board so that it can be checked.
-
-        **Parameters**
-
-            board: *list, Block*
-                A list of block positions.  Note, this list is filled with
-                None, unless a block is at said position, then it is a
-                Block object.
-
-        **Returns**
-
-            None
-        '''
-        # YOUR CODE HERE
-        pass
+    #def set_board(self, board):
+    # we choose not to use this function and instead generate block objects only when called by laser
+    # (attempt at optimizing, but not sure if it improved speed)
 
     def save_board(self,board): # need more testing.
-        '''
-        Difficulty 2
-
-        A function to save potential boards to file.  This is to be used when
-        the solution is found, but can also be used for debugging.
-
-        **Returns**
-
-            None
-        '''
-        # YOUR CODE HERE
         fptr2 = open("showstopper_2.input", 'a')
         fptr2.write('Here is the solving board')
 
@@ -237,19 +149,9 @@ class Game:
         fptr2.write(board) 
         fptr2.close()
 
-    def run(self):
-        '''
-        Difficulty 3
+    def run(self): # main code to test variuos permutations
 
-        The main code is here.  We call the generate_boards function, then we
-        loop through, using set_board to assign a board, "play" the game,
-        check if the board is the solution, if so save_board, if not then
-        we loop.
-
-        **Returns**
-
-            None
-        '''
+        # initialize as unsolved
         self.solvenum = -1
         self.goodboard = None
 
@@ -265,19 +167,27 @@ class Game:
 
         # Loop through the boards, and "play" them
         for b_index, board in enumerate(boards):
-            # board =[['O','A','O','O'],['B','C','A','O'],['A','O','O','C'],['O','A','B','O'],['O','O','O','O']]
+
+            # reset lasers and points
             all_points = copy.deepcopy(self.point_set)
             all_lasers = copy.deepcopy(self.lazor_set)
 
             solved = 0
             done = 0
             iters = 0
-            while not done and iters < 500:
+            while not done and iters < 50:
+                # maximum 50 iterations to deal with infinite looping lasers
+                # (only possible if refract block involved)
                 iters += 1
+
+                # loop through and update lasers and points
                 for l in range(len(all_lasers)):
                     all_points,new_laser = all_lasers[l].update(board, all_points,self.length,self.height)
+                    # add new laser to list if refracted
                     if new_laser is not None:
                         all_lasers.append(Laser(new_laser[0],new_laser[1]))
+
+                # get rid of points that we already hit and lasers that were destroyed   
                 for l in range(len(all_lasers)):
                     if l < len(all_lasers) and all_lasers[l].killed:
                         del(all_lasers[l])
@@ -286,18 +196,20 @@ class Game:
                         del(all_points[p])
 
                 # stop conditions:  
+                # if we hit all points, were done and solved
                 if all_points == []:
                     done = 1
                     solved = 1
+                # if no lasers left but points not hit, then we failed
                 elif all_lasers == []:
                     done = 1
                 else:
                     pass
+
+            # break out of loop if we solved it (no need to go through other permutations) and retain winning board      
             if solved:
                 self.solvenum = b_index
-                print('yes!',self.solvenum)
                 self.goodboard = board
-                print(self)
                 break
 
         # print correct board 
