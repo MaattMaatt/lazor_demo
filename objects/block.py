@@ -7,7 +7,7 @@ class Block:
         # block contains boolean info about the ways a laser will interact
         # laser can go go thru, be "killed", reflect, or reflect + refract
 
-        if blocktype == 'x' or blocktype == 'o':
+        if blocktype == 'x' or blocktype == 'O':
             self.thru = 1
             self.kill = 0
             self.reflect = 0

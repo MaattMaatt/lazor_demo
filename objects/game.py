@@ -4,6 +4,9 @@ import copy
 import itertools
 
 # import the Point, Block, and Laser objects
+from block import Block
+from point import Point
+from laser import Laser
 
 
 class Game:
@@ -78,9 +81,9 @@ class Game:
         for i in range(len(board_set)):
             board_set[i]= board_set[i].replace(' ','')
         for i in range(len(board_set)):
-    		self.board_set1.append(list(itertools.chain(board_set[i]))) 
-    	self.length = len(self.board_set1[0])
-		self.height = len(self.board_set1)
+            self.board_set1.append(list(itertools.chain(board_set[i]))) 
+        self.length = len(self.board_set1[0])
+        self.height = len(self.board_set1)
 
         data = data[data.index('GRID STOP')+1:]
 
@@ -102,6 +105,10 @@ class Game:
         self.lazor_set = [self.lazor_set[i].split(' ') for i in range(len(self.lazor_set))]
         self.point_set = data[c:] 
         self.point_set = [self.point_set[i].split(' ') for i in range(len(self.point_set))]
+        for p in range(len(self.point_set)):
+            self.point_set[p] = Point([int(self.point_set[p][1]),int(self.point_set[p][2])])
+        for l in range(len(self.lazor_set)):
+            self.lazor_set[l] = Laser([int(self.lazor_set[l][1]),int(self.lazor_set[l][2])],[int(self.lazor_set[l][3]),int(self.lazor_set[l][4])])
 
         #figure out the number of available space
         for i in range(len(self.board_set1)):
@@ -110,7 +117,7 @@ class Game:
                     self.available_space += 1
         
         # make the list of original block set
-        for i in range(len(self.block_set1)):
+        for i in range(len(self.block_set)):
             for j in range(int(self.block_set[i][1])):
                 self.blocks.append(self.block_set[i][0])
 
@@ -171,20 +178,20 @@ class Game:
                         partitions[i][j] = self.blocks_per[n][k]
                         k += 1
                     elif partitions[i][j] == 0:
-                		partitions[i][j] = 'o'
+                        partitions[i][j] = 'O'
         
         # add the block partitions into the boards
         for n in range(len(partitions)):
-    		k = 0
+    		    k = 0
             self.board_set2 = copy.deepcopy(self.board_set1)
-    		for i in range(len(self.board_set1)):
-        		for j in range(len(self.board_set1[0])):
-            		if self.board_set1[i][j] == 'o':
-                		self.board_set2[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
-                		k += 1
-    		boards.append(self.board_set2)
+    		    for i in range(len(self.board_set1)):
+        		    for j in range(len(self.board_set1[0])):
+            		    if self.board_set1[i][j] == 'o':
+                		    self.board_set2[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
+                		    k += 1
+    		    boards.append(self.board_set2)
 
-    	return boards
+        return boards
 
     def set_board(self, board):
         '''
@@ -219,16 +226,16 @@ class Game:
         '''
         # YOUR CODE HERE
         fptr2 = open("showstopper_2.input", 'a')
-		fptr2.write('Here is the solving board')
+        fptr2.write('Here is the solving board')
 
-		for i in range(len(board)):
-			for j in range(len(board[0])):
-				if board[i][j]!= None:
-					board[i][j] = board[i][j].btype()
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j]!= None:
+                    board[i][j] = board[i][j].btype()
 
 
-		fptr2.write(board) 
-		fptr2.close()
+        fptr2.write(board) 
+        fptr2.close()
 
     def run(self):
         '''
@@ -253,18 +260,43 @@ class Game:
 
         print("Playing boards...")
         sys.stdout.flush()
+
         # Loop through the boards, and "play" them
         for b_index, board in enumerate(boards):
-            # Set board
-            self.set_board(board)
+            if board == [['B','A','B'],['B','O','A'],['O','O','B']]:
+                print(b_index)
+        for b_index, board in enumerate(boards):
+            all_points = self.point_set
+            all_lasers = self.lazor_set
 
-            # MAYBE MORE CODE HERE?
+            solved = 0
+            done = 0
+            iters = 0
+            while not done and iters < 500:
+                #print(iters)
+                iters += 1
+                for l in range(len(all_lasers)):
+                    all_points,new_laser = all_lasers[l].update(board, all_points,self.length,self.height)
+                    appendit = []
+                    if new_laser is not None:
+                        all_lasers.append(Laser(new_laser[0],new_laser[1]))
+                for l in range(len(all_lasers)):
+                    if l < len(all_lasers) and all_lasers[l].killed:
+                        del(all_lasers[l])
+                for p in range(len(all_points)):
+                    if p < len(all_points) and all_points[p].intersect:
+                        del(all_points[p])
 
-            # LOOP THROUGH LASERS
-            for j, laser in enumerate(current_lasers):
-              child_laser = None
-              child_laser = laser.update(self.board, self.points)
+                # stop conditions:         
+                if all_points == []:
+                    done = 1
+                    solved = 1
+                elif all_lasers == []:
+                    break
+                else: 
+                    pass
+            print(solved)
 
-            # MAYBE MORE CODE HERE?
-
-            # CHECKS HERE
+ggggg = Game("showstopper_2.input")
+ggggg.run()
+print('svsdvsvsvd')
