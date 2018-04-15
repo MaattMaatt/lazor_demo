@@ -42,12 +42,13 @@ class Game:
 
     # DO SOMETHING HERE SO WE CAN PRINT A REPRESENTATION OF GAME!
     def __str__(self):
-        print('-'* (2 *len(self.board_set1[0])+1))
-        for i in range(len(self.board_set1[0])):
-            for j in range(len(self.board_set1[0])):
-                print('|'+ str(self.board_set1[i][j]), end = '')
+        print('-'* (2 *len(self.goodboard[0])+1))
+        for i in range(len(self.goodboard[0])):
+            for j in range(len(self.goodboard[0])):
+                print('|'+ str(self.goodboard[i][j]), end = '')
             print ('|')
-            print('-'* (2 *len(self.board_set1[0])+1))
+            print('-'* (2 *len(self.goodboard[0])+1))
+        return ''
 
     def read(self, fptr):
         '''
@@ -250,6 +251,7 @@ class Game:
 
             None
         '''
+        self.solvenum = -1
 
         # Get all boards
         print("Generating all the boards..."),
@@ -263,21 +265,17 @@ class Game:
 
         # Loop through the boards, and "play" them
         for b_index, board in enumerate(boards):
-            if board == [['B','A','B'],['B','O','A'],['O','O','B']]:
-                print(b_index)
-        for b_index, board in enumerate(boards):
-            all_points = self.point_set
-            all_lasers = self.lazor_set
+
+            all_points = copy.deepcopy(self.point_set)
+            all_lasers = copy.deepcopy(self.lazor_set)
 
             solved = 0
             done = 0
             iters = 0
             while not done and iters < 500:
-                #print(iters)
                 iters += 1
                 for l in range(len(all_lasers)):
                     all_points,new_laser = all_lasers[l].update(board, all_points,self.length,self.height)
-                    appendit = []
                     if new_laser is not None:
                         all_lasers.append(Laser(new_laser[0],new_laser[1]))
                 for l in range(len(all_lasers)):
@@ -287,16 +285,20 @@ class Game:
                     if p < len(all_points) and all_points[p].intersect:
                         del(all_points[p])
 
-                # stop conditions:         
+                # stop conditions:  
                 if all_points == []:
                     done = 1
                     solved = 1
                 elif all_lasers == []:
-                    break
-                else: 
+                    done = 1
+                else:
                     pass
-            print(solved)
+            if solved:
+                self.solvenum = b_index
+                print('yes!',self.solvenum)
+                self.goodboard = board
+                print(self)
+                break
 
-ggggg = Game("showstopper_2.input")
+ggggg = Game('mad_7.input')
 ggggg.run()
-print('svsdvsvsvd')
