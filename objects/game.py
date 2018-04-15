@@ -11,6 +11,15 @@ from laser import Laser
 class Game:
 
     def __init__(self, fptr):
+        '''
+        Initialize our game.
+        **Parameters**
+            fptr: *str*
+                The file name of the input board to solve.
+        **Returns**
+            game: *Game*
+                This game object.
+        '''
  
         self.fname = fptr
         self.available_space = 0
@@ -20,6 +29,10 @@ class Game:
 
     # make initial board to print
     def __str__(self):
+        '''
+        print the initial board
+        '''
+
         print('-'* (2 *len(self.board_set1[0])+1))
         for i in range(len(self.board_set1)):
             for j in range(len(self.board_set1[0])):
@@ -29,6 +42,17 @@ class Game:
         return ''
 
     def read(self, fptr):
+        '''
+        reads in a file, and generates the internal board list, lazor list, point list and block list. 
+        Also generate the permutation of the block list
+
+        **Parameters**
+            fptr: *str*
+                The file name of the input board to solve.
+        **Returns**
+            None
+        '''
+
 
         self.fptr1 = open(fptr, 'r')
         self.fptr = self.fptr1.read()
@@ -39,15 +63,18 @@ class Game:
             if i < len(data) and data[i]== '':
                 del data[i]
 
-        #create the list of board, block, lazor, point separately
+        # generate the original board set list as 'board_set1'
         board_set = data[data.index('GRID START')+1:data.index('GRID STOP')]
         for i in range(len(board_set)):
             board_set[i]= board_set[i].replace(' ','')
         for i in range(len(board_set)):
-            self.board_set1.append(list(itertools.chain(board_set[i]))) 
+            self.board_set1.append(list(itertools.chain(board_set[i])))
+
+        # Define the length and height of our original board. 
         self.length = len(self.board_set1[0])
         self.height = len(self.board_set1)
 
+        # Genarate and reformat the block set, lazor set and point set from the files we read in/
         data = data[data.index('GRID STOP')+1:]
 
         for i in range(len(data)):
@@ -68,6 +95,8 @@ class Game:
         self.lazor_set = [self.lazor_set[i].split(' ') for i in range(len(self.lazor_set))]
         self.point_set = data[c:] 
         self.point_set = [self.point_set[i].split(' ') for i in range(len(self.point_set))]
+
+        # Assign the point and lazor objects to the list separately.
         for p in range(len(self.point_set)):
             self.point_set[p] = Point([int(self.point_set[p][1]),int(self.point_set[p][2])])
         for l in range(len(self.lazor_set)):
@@ -87,46 +116,61 @@ class Game:
         # make the list of all permutations of blocks
         self.blocks_per = list(set(itertools.permutations(self.blocks)))
 
-
+        # close the file
         self.fptr1.close()
 
 
     def generate_boards(self): 
+        '''
+        A function to generate all possible board combinations with the
+        available blocks.
+
+        **Parameters**
+            None
+    
+        **Returns**
+            board: *list*
+                a list of all possible boards containing blocks that could happen in the original board
+        '''
 
         def get_partitions(n, k):
-            # recommended way of generating permutations
-            # **Reference**- http://stackoverflow.com/a/34690583
+            # generating permutations
+
             for c in itertools.combinations(range(n + k - 1), k - 1):
                 yield [b - a - 1 for a, b in zip((-1,) + c, c + (n + k - 1,))]
 
-        # Get the different possible block positions.  Note, due to the function we're using, we
-        # skip any instance of multiple "stars in bins".
+        # Get the a list of different possible block positions. 
         partitions = [
             p for p in get_partitions(len(self.blocks), self.available_space) if max(p) == 1
         ]
 
-        # Now we have the partitions, we just need to make our boards
-        boards = []
 
-        # add the permutationed blocks into the available_space partitions
-        for n in range(len(self.blocks_per)):
-            for i in range(len(partitions)):
+
+        # add the permutated blocks into the available_space partitions
+        partitions_all = []
+        for i in range(len(partitions)):
+            for n in range(len(self.blocks_per)):
                 k = 0
+                partitions1 = copy.deepcopy(partitions)
                 for j in range(len(partitions[0])):
                     if partitions[i][j] == 1:
-                        partitions[i][j] = self.blocks_per[n][k]
+                        partitions1[i][j] = self.blocks_per[n][k]
                         k += 1
                     elif partitions[i][j] == 0:
-                        partitions[i][j] = 'O'
+                        partitions1[i][j] = 'O'
+                partitions_all.append(copy.deepcopy(partitions1[i]))
         
+        
+        # Now we have the partitions, we just need to make our boards
+        boards = []
         # add the block partitions into the boards
-        for n in range(len(partitions)):
+        for n in range(len(partitions_all)):
             k = 0
             self.board_set2 = copy.deepcopy(self.board_set1)
             for i in range(len(self.board_set1)):
                 for j in range(len(self.board_set1[0])):
                     if self.board_set1[i][j] == 'o':
-                        self.board_set2[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
+                        self.board_set2[i][j] = partitions_all[n][k]    # could change to the Block object with the input of partitions[n][k]
                         k += 1
             boards.append(self.board_set2)
 
@@ -136,17 +180,23 @@ class Game:
     # we choose not to use this function and instead generate block objects only when called by laser
     # (attempt at optimizing, but not sure if it improved speed)
 
-    def save_board(self,board): # need more testing.
-        fptr2 = open("showstopper_2.input", 'a')
-        fptr2.write('Here is the solving board')
+    def save_board(self,board): 
+        '''
+        A function to save potential boards to file.  This is to be used when
+        the solution is found, but can also be used for debugging.
+        **Parameters**
+            board: *list*
+                The board list we want to write to the original file
+        
+        **Returns**
+            None
+        '''
+        fptr2 = open(self.fname, 'a')
+        fptr2.write('# Here is the solve:')
 
         for i in range(len(board)):
-            for j in range(len(board[0])):
-                if board[i][j]!= None:
-                    board[i][j] = board[i][j].btype()
-
-
-        fptr2.write(board) 
+            fptr2.write(str(board[i]))
+            
         fptr2.close()
 
     def run(self): # main code to test variuos permutations
@@ -222,5 +272,7 @@ class Game:
                     print('|'+ str(self.goodboard[i][j]), end = '')
                 print ('|')
                 print('-'* (2 *len(self.goodboard[0])+1))
+
+            self.save_board(self.goodboard)
         else: 
             print('No solution found...')
