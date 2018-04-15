@@ -21,7 +21,7 @@ class Game:
     # make initial board to print
     def __str__(self):
         print('-'* (2 *len(self.board_set1[0])+1))
-        for i in range(len(self.board_set1[0])):
+        for i in range(len(self.board_set1)):
             for j in range(len(self.board_set1[0])):
                 print('|'+ str(self.board_set1[i][j]), end = '')
             print ('|')
@@ -210,13 +210,14 @@ class Game:
             if solved:
                 self.solvenum = b_index
                 self.goodboard = board
+                print(self)
                 break
 
         # print correct board 
         if self.goodboard != None:
             print('Solution:')
             print('-'* (2 *len(self.goodboard[0])+1))
-            for i in range(len(self.goodboard[0])):
+            for i in range(len(self.goodboard)):
                 for j in range(len(self.goodboard[0])):
                     print('|'+ str(self.goodboard[i][j]), end = '')
                 print ('|')
