@@ -173,12 +173,13 @@ class Game:
         # add the block partitions into the boards
         for n in range(len(partitions)):
     		k = 0
+            self.board_set2 = copy.deepcopy(self.board_set1)
     		for i in range(len(self.board_set1)):
         		for j in range(len(self.board_set1[0])):
             		if self.board_set1[i][j] == 'o':
-                		self.board_set1[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
+                		self.board_set2[i][j] = partitions[n][k]    # could change to the Block object with the input of partitions[n][k]
                 		k += 1
-    		boards.append(self.board_set1)
+    		boards.append(self.board_set2)
 
     	return boards
 
