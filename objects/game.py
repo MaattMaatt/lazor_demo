@@ -8,7 +8,6 @@ from block import Block
 from point import Point
 from laser import Laser
 
-
 class Game:
     '''
     The game grid.  Here we read in some user input, assign all our blocks,
@@ -42,12 +41,12 @@ class Game:
 
     # DO SOMETHING HERE SO WE CAN PRINT A REPRESENTATION OF GAME!
     def __str__(self):
-        print('-'* (2 *len(self.goodboard[0])+1))
-        for i in range(len(self.goodboard[0])):
-            for j in range(len(self.goodboard[0])):
-                print('|'+ str(self.goodboard[i][j]), end = '')
+        print('-'* (2 *len(self.board_set1[0])+1))
+        for i in range(len(self.board_set1[0])):
+            for j in range(len(self.board_set1[0])):
+                print('|'+ str(self.board_set1[i][j]), end = '')
             print ('|')
-            print('-'* (2 *len(self.goodboard[0])+1))
+            print('-'* (2 *len(self.board_set1[0])+1))
         return ''
 
     def read(self, fptr):
@@ -252,6 +251,7 @@ class Game:
             None
         '''
         self.solvenum = -1
+        self.goodboard = None
 
         # Get all boards
         print("Generating all the boards..."),
@@ -265,7 +265,7 @@ class Game:
 
         # Loop through the boards, and "play" them
         for b_index, board in enumerate(boards):
-
+            # board =[['O','A','O','O'],['B','C','A','O'],['A','O','O','C'],['O','A','B','O'],['O','O','O','O']]
             all_points = copy.deepcopy(self.point_set)
             all_lasers = copy.deepcopy(self.lazor_set)
 
@@ -300,5 +300,14 @@ class Game:
                 print(self)
                 break
 
-ggggg = Game('mad_7.input')
-ggggg.run()
+        # print correct board 
+        if self.goodboard != None:
+            print('Solution:')
+            print('-'* (2 *len(self.goodboard[0])+1))
+            for i in range(len(self.goodboard[0])):
+                for j in range(len(self.goodboard[0])):
+                    print('|'+ str(self.goodboard[i][j]), end = '')
+                print ('|')
+                print('-'* (2 *len(self.goodboard[0])+1))
+        else: 
+            print('No solution found...')
