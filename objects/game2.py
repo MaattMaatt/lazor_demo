@@ -11,6 +11,7 @@ from laser import Laser
 class Game:
 
     def __init__(self, fptr):
+
         '''
         Initialize our game.
         **Parameters**
@@ -19,8 +20,8 @@ class Game:
         **Returns**
             game: *Game*
                 This game object.
-        '''
- 
+        ''' 
+
         self.fname = fptr
         self.available_space = 0
         self.blocks = []
@@ -53,7 +54,6 @@ class Game:
             None
         '''
 
-
         self.fptr1 = open(fptr, 'r')
         self.fptr = self.fptr1.read()
 
@@ -68,7 +68,7 @@ class Game:
         for i in range(len(board_set)):
             board_set[i]= board_set[i].replace(' ','')
         for i in range(len(board_set)):
-            self.board_set1.append(list(itertools.chain(board_set[i])))
+            self.board_set1.append(list(itertools.chain(board_set[i]))) 
 
         # Define the length and height of our original board. 
         self.length = len(self.board_set1[0])
@@ -120,7 +120,7 @@ class Game:
         self.fptr1.close()
 
 
-    def generate_boards(self): 
+    def generate_boards(self):
         '''
         A function to generate all possible board combinations with the
         available blocks.
@@ -139,15 +139,16 @@ class Game:
             for c in itertools.combinations(range(n + k - 1), k - 1):
                 yield [b - a - 1 for a, b in zip((-1,) + c, c + (n + k - 1,))]
 
-        # Get the a list of different possible block positions. 
+        # Get the different possible block positions.  Note, due to the function we're using, we
+        # skip any instance of multiple "stars in bins".
         partitions = [
             p for p in get_partitions(len(self.blocks), self.available_space) if max(p) == 1
         ]
 
+        # Now we have the partitions, we just need to make our boards
+        boards = []
 
-
-        # add the permutated blocks into the available_space partitions
-
+        # add the permutationed blocks into the available_space partitions
         for n in range(len(self.blocks_per)):
             for i in range(len(partitions)):
                 k = 0
@@ -156,11 +157,8 @@ class Game:
                         partitions[i][j] = self.blocks_per[n][k]
                         k += 1
                     elif partitions[i][j] == 0:
-                        partitions[i][j] = 'o'
+                        partitions[i][j] = 'O'
         
-        
-        # Now we have the partitions, we just need to make our boards
-        boards = []
         # add the block partitions into the boards
         for n in range(len(partitions)):
             k = 0
@@ -178,7 +176,7 @@ class Game:
     # we choose not to use this function and instead generate block objects only when called by laser
     # (attempt at optimizing, but not sure if it improved speed)
 
-    def save_board(self,board): 
+    def save_board(self,board):
         '''
         A function to save potential boards to file.  This is to be used when
         the solution is found, but can also be used for debugging.
@@ -258,9 +256,10 @@ class Game:
             if solved:
                 self.solvenum = b_index
                 self.goodboard = board
+                print(self)
                 break
 
-        # print correct board 
+        # print correct board to command window in stylized format
         if self.goodboard != None:
             print('Solution:')
             print('-'* (2 *len(self.goodboard[0])+1))
@@ -269,7 +268,5 @@ class Game:
                     print('|'+ str(self.goodboard[i][j]), end = '')
                 print ('|')
                 print('-'* (2 *len(self.goodboard[0])+1))
-
-            self.save_board(self.goodboard)
         else: 
             print('No solution found...')

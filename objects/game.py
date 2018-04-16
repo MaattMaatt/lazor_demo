@@ -262,7 +262,7 @@ class Game:
                 self.goodboard = board
                 break
 
-        # print correct board 
+        # print correct board to command window in stylized format
         if self.goodboard != None:
             print('Solution:')
             print('-'* (2 *len(self.goodboard[0])+1))
