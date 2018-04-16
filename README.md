@@ -10,22 +10,32 @@ Lazor is an app-based puzzle game where laser beams are used to light up specifi
 
 ## Files: 
 
-* **boards** - file folder containing 9 example Lazor boards, in format specified by hherbol.  Boards and approximate execution times are listed below (total ~ sec):
-	* braid_5 - sec
-	* diagonal_8 - sec
-	* diagonal_9 - sec
-	* mad_1 - sec
-	* mad_7 - sec
-	* showstopper_2 - sec
-	* tricky_1 - sec
-	* vertices_1 - sec
-	* vertices_2 - sec
+* **boards** - file folder containing 9 example Lazor boards, in format specified by hherbol.  Boards and approximate execution times are listed below:
+	* braid_5 - .4 sec
+	* diagonal_8 - (>30 min with solver, not solver2)
+	* diagonal_9 - 150 sec
+	* mad_1 - 11 sec (with solver, not solver2)
+	* mad_7 - 25 sec
+	* showstopper_2 - .01 sec
+	* tricky_1 - .1 sec
+	* vertices_1 - .5 sec
+	* vertices_2 - .15 sec
 * **objects** - object files used in the game
-	* **block** - stores block type and outputs T/F when asked how a laser will interact with it.
-	* **game** - the main file that contains most of hte code to run the game.  Reads in board file, prints output, generates permutations of boards and runs each permutation, updating laser positions until the game ends.
-	* **laser** - lasers move in discrete steps, interacting with block objects as they cross them and updating points crossed.  [laserobject].update is the main machinery for progressing the solver.
-	* **point** - stores a solution point and tells whether or not it has been intersected
-* **solver.py** - **RUN THIS FILE** and specify game board to time the run of the game, print solution to command window and append to file (if already solved, will append again)
+	* **block.py** - stores block type and outputs T/F when asked how a laser will interact with it.
+	* **game2.py** - the main file that contains most of hte code to run the game.  Reads in board file, prints output, generates permutations of boards and runs each permutation, updating laser positions until the game ends.
+	* **game.py** - different version of game2, see explanation below in "unresolved issues".
+	* **laser.py** - lasers move in discrete steps, interacting with block objects as they cross them and updating points crossed.  [laserobject].update is the main machinery for progressing the solver.
+	* **point.py** - stores a solution point and tells whether or not it has been intersected.
+* **solver2.py** - **RUN THIS FILE** and specify game board to time the run of the game, print solution to command window and append to file (if already solved, will append again).
+* **solver.py** - different version of solver2, see explanation below in  "unresolved issues".
+
+## Unresolved issues
+
+We report 2 versions of the solver, “solver.py” and “solver2.py” , each with their corresponding game files (“game.py” and “game2.py”).  The solver2 file works for most of the boards, but has an issue in the permutations that causes boards with more than one type of user input block to fail.  This means solver2 fails to solve diagonal_8 and mad_1, and colud have potentially caused tricky_1 to fail.
+
+The issue is that solver2, while going through all permutations of position, does not porperly go through all permutations of block type, which is only an issue if there is more than one block type.
+
+Why not use use only solver then?  It is much slower than solver2 when given the same board (tricky_1 in 55 sec instead of .1 sec).  We never fully resolved the speed issue, and ran out of time.  It could be ans issue with deepcopy(), by using too much memory.  We know the issue is in the board generation not the solving, since the solving portion is unchanged between the two versions.  It does solve mad_1 but does not solve diagonal_8 after 30 minutes of waiting, though we believe it would eventually solve it.
 
 ## Optimization:
 
