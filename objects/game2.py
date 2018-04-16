@@ -258,7 +258,6 @@ class Game:
             if solved:
                 self.solvenum = b_index
                 self.goodboard = board
-                print(self)
                 break
 
         # print correct board 
