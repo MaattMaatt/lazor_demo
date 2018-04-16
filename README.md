@@ -31,7 +31,7 @@ Lazor is an app-based puzzle game where laser beams are used to light up specifi
 
 ## Unresolved issues
 
-We report 2 versions of the solver, “solver.py” and “solver2.py” , each with their corresponding game files (“game.py” and “game2.py”).  The solver2 file works for most of the boards, but has an issue in the permutations that causes boards with more than one type of user input block to fail.  This means solver2 fails to solve diagonal_8 and mad_1, and colud have potentially caused tricky_1 to fail.
+We report 2 versions of the solver, “solver.py” and “solver2.py” , each with their corresponding game files (“game.py” and “game2.py”).  The solver2 file works for most of the boards, but has an issue in the permutations that causes boards with more than one type of user input block to fail.  This means solver2 fails to solve diagonal_8 and mad_1, and could have caused tricky_1 to fail.
 
 The issue is that solver2, while going through all permutations of position, does not porperly go through all permutations of block type, which is only an issue if there is more than one block type.
 
