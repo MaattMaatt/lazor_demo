@@ -24,14 +24,14 @@ Lazor is an app-based puzzle game where laser beams are used to light up specifi
 	* **block.py** - stores block type and outputs T/F when asked how a laser will interact with it.
 	* **game2.py** - the main file that contains most of hte code to run the game.  Reads in board file, prints output, generates permutations of boards and runs each permutation, updating laser positions until the game ends.
 	* **game.py** - different version of game2, see explanation below in "unresolved issues".
-	* **laser.py** - lasers move in discrete steps, interacting with block objects as they cross them and updating points crossed.  [laserobject].update is the main machinery for progressing the solver.
+	* **laser.py** - lasers move in discrete steps, interacting with block objects as they cross them and updating points crossed.  (laserobject).update is the main machinery for progressing the solver.
 	* **point.py** - stores a solution point and tells whether or not it has been intersected.
 * **solver2.py** - **RUN THIS FILE** and specify game board to time the run of the game, print solution to command window and append to file (if already solved, will append again).
 * **solver.py** - different version of solver2, see explanation below in  "unresolved issues".
 
 ## Unresolved issues
 
-We report 2 versions of the solver, ìsolver.pyî and ìsolver2.pyî , each with their corresponding game files (ìgame.pyî and ìgame2.pyî).  The solver2 file works for most of the boards, but has an issue in the permutations that causes boards with more than one type of user input block to fail.  This means solver2 fails to solve diagonal_8 and mad_1, and colud have potentially caused tricky_1 to fail.
+We report 2 versions of the solver, ‚Äúsolver.py‚Äù and ‚Äúsolver2.py‚Äù , each with their corresponding game files (‚Äúgame.py‚Äù and ‚Äúgame2.py‚Äù).  The solver2 file works for most of the boards, but has an issue in the permutations that causes boards with more than one type of user input block to fail.  This means solver2 fails to solve diagonal_8 and mad_1, and colud have potentially caused tricky_1 to fail.
 
 The issue is that solver2, while going through all permutations of position, does not porperly go through all permutations of block type, which is only an issue if there is more than one block type.
 
