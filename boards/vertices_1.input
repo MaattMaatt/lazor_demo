@@ -40,4 +40,3 @@ L 0 5 1 1
 
 # Here we have the points that we need the lazers to intersect
 P 3 4
-# Here is the solve:['O', 'A', 'O', 'O']['A', 'O', 'O', 'O']['O', 'B', 'O', 'A']['O', 'O', 'O', 'O']['O', 'A', 'O', 'O']

@@ -8,7 +8,7 @@ from block import Block
 from point import Point
 from laser import Laser
 
-class Game:
+class Game2:
 
     def __init__(self, fptr):
 
@@ -36,7 +36,7 @@ class Game:
 
         print('-'* (2 *len(self.board_set1[0])+1))
         for i in range(len(self.board_set1)):
-            for j in range(len(self.board_set1[0])):
+            for j in range(len(self.board_set1)):
                 print('|'+ str(self.board_set1[i][j]), end = '')
             print ('|')
             print('-'* (2 *len(self.board_set1[0])+1))
@@ -256,7 +256,6 @@ class Game:
             if solved:
                 self.solvenum = b_index
                 self.goodboard = board
-                print(self)
                 break
 
         # print correct board to command window in stylized format
@@ -268,5 +267,6 @@ class Game:
                     print('|'+ str(self.goodboard[i][j]), end = '')
                 print ('|')
                 print('-'* (2 *len(self.goodboard[0])+1))
+            self.save_board(self.goodboard)
         else: 
             print('No solution found...')

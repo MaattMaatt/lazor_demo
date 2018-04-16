@@ -4,12 +4,12 @@ game object, initialized by a board, and then run the game!
 '''
 
 import time
-from objects.game import Game
+from objects.game2 import Game2
 
 
 def solve(fptr):
     # Start the game
-    g = Game(fptr)
+    g = Game2(fptr)
     # Print a representation of the board
     print(g)
     # Solve the board, and time how long it took.
@@ -21,4 +21,4 @@ def solve(fptr):
 
 
 if __name__ == "__main__":
-    solve("boards/vertices_1.input")
+    solve("boards/showstopper_2.input")
